@@ -4,7 +4,8 @@ Run AWS's SSM Send-Command API using this action. Refer to [AWS SDK for JavaScri
 
 ```yml
   - name: Run aws ssm send-command
-    uses: nohmad/aws-ssm-send-command-action@master
+    uses: andrewinnocent/aws-ssm-send-command-action@master
+    id: ssm
     with:
       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -14,6 +15,13 @@ Run AWS's SSM Send-Command API using this action. Refer to [AWS SDK for JavaScri
       document-name: AWS-RunShellScript
       parameters: |
         {"commands":["uname -a"]}
+
+  - name: Review outputs
+    if: success() || failure()
+    run: |
+      echo "Command ID: ${{ steps.ssm.outputs.command-id }}"
+      echo "Status: ${{ steps.ssm.outputs.status }}"
+      echo "Output: ${{ steps.ssm.outputs.output }}"
 ```
 
 ## Inputs

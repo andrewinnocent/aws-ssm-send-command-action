@@ -67,7 +67,7 @@ async function main() {
     if (status != 'Success') {
         throw new Error(`Failed to send command: ${status}`);
     } else if (hasErrors) {
-        throw new Error('Send command succeeded, however see reported script ERROR(s) in Get Outputs step.')
+        throw new Error('Send command succeeded, however see reported script ERROR(s) in the following step.')
     }
 }
 main().catch(e => core.setFailed(e.message));

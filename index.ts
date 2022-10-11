@@ -46,7 +46,6 @@ async function main() {
     core.setOutput('command-id', CommandId);
     const int32 = new Int32Array(new SharedArrayBuffer(4));
     const outputs = [];
-    let hasErrors = false;
     let status = 'Pending';
     for (let i = 0; i < TimeoutSeconds; i++) {
         Atomics.wait(int32, 0, 0, 1000);
@@ -55,9 +54,7 @@ async function main() {
         status = invocation.Status;
         if (['Success', 'Failure'].includes(status)) {
             for (const cp of invocation.CommandPlugins || []) {
-                const output = cp.Output;
-                outputs.push(output);
-                hasErrors = output.includes('----------ERROR-------');
+                outputs.push(cp.Output as string);
             }
             break;
         }
@@ -66,8 +63,6 @@ async function main() {
     core.setOutput('output', outputs.join('\n'));
     if (status != 'Success') {
         throw new Error(`Failed to send command: ${status}`);
-    } else if (hasErrors) {
-        throw new Error('Send command succeeded, however see reported script ERROR(s) in the following step.')
     }
 }
 main().catch(e => core.setFailed(e.message));
